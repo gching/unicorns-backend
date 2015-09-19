@@ -3,7 +3,10 @@
 var express = require('express');
 var router = express.Router();
 var Firebase = require('firebase');
+var braintree = require('braintree');
 
+
+// Setup gatway with sandbox.
 // Use Firebase
 var generalRef = new Firebase("https://pay-my-face.firebaseio.com/");
 var usersRef = new Firebase("https://pay-my-face.firebaseio.com/users");
