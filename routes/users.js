@@ -87,12 +87,17 @@ router.post('/', function(req, res, next){
         tosAccepted: true,
         masterMerchantAccountId: 'randomcompany',
       }, function(err, results){
-        
+
         // Save the submerchant id
         actualUserData.merchant_id = results.merchantAccount.id;
 
         // We also have to create a users on Firebase itself.
-        usersRef.push(actualUserData);
+        var newUsersRef = usersRef.push(actualUserData);
+
+        // Store the name
+        actualUserData.id = newUsersRef.name();
+
+        // Send back.
         res.send({ user: actualUserData});
 
 
