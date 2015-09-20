@@ -65,8 +65,10 @@ function uploadFace(baseImage, callback){
               // Got facial features, save it in firebase
               var faceRes = {
                 image_type: 'face',
-                image_calc: faceFeatRes
+                image_calc: faceFeatRes,
+                cropped_image: cloudUrl+'.jpg'
               }
+
               callback(null, faceRes)
 
             })
