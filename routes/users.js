@@ -4,17 +4,10 @@ var express = require('express');
 var router = express.Router();
 var Firebase = require('firebase');
 var braintree = require('braintree');
-var indico = require('indico.io');
-indico.apiKey =  'ad294a5bead684b29ab27f40bbabbb02';
-var cloudinary = require('cloudinary');
-var base64 = require('node-base64-image');
+var helper = require('./helper');
 
 
-cloudinary.config({
-  cloud_name: 'gavinching',
-  api_key: '647891574133533',
-  api_secret: 'IurlRqzcOHItdfndsh_ZtiUzg00'
-});
+
 
 
 var gateway = braintree.connect({
@@ -154,86 +147,29 @@ router.post('/:id/images', function(req, res, next){
 
 
   if (imageType == 'face'){ // Face
-
-    // Upload to cloudinary to calculate facial information.
-    console.log("HErehr")
-    var uriImage = 'data:image/png;base64,' + baseImage;
-    cloudinary.uploader.upload(uriImage, function(cloudinary_res){
-      var imageId = cloudinary_res.public_id;
-
-      // Image uploaded, now do a crop by using indico API
-
-      indico.facialLocalization(baseImage)
-      .then(function(facialLocRes) {
-
-        // Coords to crop and then store to images.
-        var coords = facialLocRes[0];
-        var topLeft = coords.top_left_corner;
-        var bottomRight = coords.bottom_right_corner;
-
-        var x = topLeft[0];
-        var y = topLeft[1];
-        var width = bottomRight[0] - x;
-        var height = bottomRight[1] - y;
-
-
-        // Get the buffer from the cloudinary url alongside the proper cropping
-        var cloudUrl = cloudinary.url(imageId,
-          {width: width, height: height, x: x, y: y, crop: "crop"});
-
-        base64.base64encoder(cloudUrl, undefined, function (err, image) {
-            if (err) { next(err); }
-            var imageBase64Cropped = image.toString('base64');
-            // ACTUALLY  call indico to get facial features
-            // then finally save it
-            indico.facialFeatures(imageBase64Cropped)
-            .then(function(faceFeatRes){
-              // Got facial features, save it in firebase
-              var faceRes = {
-                image_type: 'face',
-                image_calc: faceFeatRes
-              }
-
-              var faceResRef = usersRef.child(req.params.id).child('images')
-                .push(faceRes);
-
-              // Get the new id into it
-              faceRes.id = faceResRef.name();
-
-              res.send({images: [faceRes]});
-
-            })
-            .catch(function(err){
-              next(err)
-            })
-        });
-
-      }).catch(function(err) {
+    helper.uploadFace(baseImage, function(err, faceResults){
+      if (err){
         next(err);
-      });
-
-    });
-
-  } else { // Type
-    // Use indico and calculate image features
-    indico.imageFeatures(baseImage)
-    .then(function(imageFeatRes){
-      var logoRes = {
-        image_type: 'logo',
-        image_calc: imageFeatRes
       }
+      var faceResRef = usersRef.child(req.params.id).child('images')
+        .push(faceResults);
+
+      // Get the new id into it
+      faceResults.id = faceResRef.name();
+
+      res.send({images: [faceResults]});
+    });
+  } else { // Type
+
+    helper.uploadLogo(baseImage, function(err, logoResults){
       var logoTypeRef = usersRef.child(req.params.id).child('images')
-        .push(logoRes);
+        .push(logoResults);
 
-      logoRes.id = logoTypeRef.name();
-      res.send({images: [logoRes]});
-
-    }).catch(function(err){
-      next(err)
+      logoResults.id = logoTypeRef.name();
+      res.send({images: [logoResults]});
     })
+
   }
-
-
 
 });
 

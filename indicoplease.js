@@ -10,12 +10,13 @@ cloudinary.config({
 
 var base64 = require('node-base64-image');
 
-var filename = "test.png";
+var filename = "cat.png";
 
 fs.readFile(filename, function(err, data) {
   var base64data = new Buffer(data).toString('base64');
+  console.log(base64data)
   //base64data = 'data:image/png;base64,' + base64data;
-
+/*
   console.log(base64data);
   indico.facialLocalization(base64data)
   .then(function(res) {
@@ -23,6 +24,8 @@ fs.readFile(filename, function(err, data) {
   }).catch(function(err) {
     console.warn(err);
   });
+  */
+
 /**
   cloudinary.uploader.upload(base64data, function(res){
     console.log('hi')
