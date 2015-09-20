@@ -162,10 +162,10 @@ router.post('/:id/images', function(req, res, next){
       var imageId = cloudinary_res.public_id;
 
       // Image uploaded, now do a crop by using indico API
-      console.log(baseImage);
+
       indico.facialLocalization(baseImage)
       .then(function(facialLocRes) {
-        console.log("sfajflfjkls")
+
         // Coords to crop and then store to images.
         var coords = facialLocRes[0];
         var topLeft = coords.top_left_corner;
