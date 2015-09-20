@@ -6,12 +6,13 @@ var router = express.Router()
 
 var users = require('./users');
 var transactions = require('./transactions');
+var find = require('./find');
 
 // Define routes
 router.get('/', function(req, res, next){
   res.send({
     'routes': [
-      '/users', '/transactions'
+      '/users', '/transactions', '/find'
     ]
   })
 });
@@ -21,5 +22,7 @@ router.get('/', function(req, res, next){
 router.use('/users', users);
 // Transaction routing
 router.use('/transactions', transactions);
+// Finding routing
+router.use('/find', find)
 
 module.exports = router;

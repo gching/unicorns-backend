@@ -34,14 +34,14 @@ router.get('/', function(req, res, next){
   POST /users
   Creates a new user.
   Parameters: {
-    name:
+    first_name:
+    last_name:
     email:
     pictures:
     password:
     phone_number:
     credit_card_number:
     credit_card_expiry_date:
-    credit_card_cvc:
   }
 */
 router.post('/', function(req, res, next){
@@ -62,8 +62,7 @@ router.post('/', function(req, res, next){
         last_name: req.body.last_name || null,
         phone_number: req.body.phone_number || null,
         credit_card_number: req.body.credit_card_number || null,
-        credit_card_expiry_date: req.body.credit_card_expiry_date || null,
-        credit_card_cvc: req.body.credit_card_cvc || null
+        credit_card_expiry_date: req.body.credit_card_expiry_date || null
       };
       // Create submerchant on brainTree
       gateway.merchantAccount.create({
@@ -113,8 +112,11 @@ router.post('/', function(req, res, next){
 */
 router.get('/:id', function(req, res, next){
   usersRef.child(req.params.id).once('value', function(data){
-    //if (data === null){}
-    res.send({ user: data.val() });
+
+    var user = data.val();
+    user.id = data.key();
+
+    res.send({ user: user });
   })
 });
 
