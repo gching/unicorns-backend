@@ -2,9 +2,9 @@ var braintree = require('braintree');
 
 var gateway = braintree.connect({
   environment: braintree.Environment.Sandbox,
-  merchantId: 'cx4fcmcdnjxk6k8m',
-  publicKey: '5jggjrvh24jth45n',
-  privateKey: '2d12417b4a738713af464ed689f6b484'
+  merchantId: 'zgbd22s3hvs8wz5n',
+  publicKey: '75yxqwfjgyr98nsm',
+  privateKey: 'beb1e6838b2c7a96db149da04521d359'
 });
 
 gateway.merchantAccount.create({
@@ -22,11 +22,13 @@ gateway.merchantAccount.create({
     }
   },
   funding: {
-    destination: 'email'
+    destination: 'email',
+    email: 'jane@14ladders.com'
   },
   tosAccepted: true,
-  masterMerchantAccountId: 'derpina',
+  masterMerchantAccountId: 'randomcompany',
 }, function(err, results){
-  console.log(err);
+  //console.log(results.errors.errorCollections.merchantAccount.validationErrors);
   console.log(results);
+
 });
